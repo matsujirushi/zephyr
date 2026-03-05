@@ -911,13 +911,13 @@ static void pin_init(void)
 	 */
 
 	/* MDM_POWER -> 1 for 500-1000 msec. */
-	gpio_pin_set_dt(&power_gpio, 1);
+	gpio_pin_set_dt(&power_gpio, 0);
 	k_sleep(K_MSEC(750));
 
 	/* MDM_POWER -> 0 and wait for ~2secs as UART remains in "inactive" state
 	 * for some time after the power signal is enabled.
 	 */
-	gpio_pin_set_dt(&power_gpio, 0);
+	gpio_pin_set_dt(&power_gpio, 1);
 	k_sleep(K_SECONDS(2));
 
 	LOG_INF("... Done!");
@@ -951,7 +951,6 @@ static const struct modem_cmd unsol_cmds[] = {
 /* Commands sent to the modem to set it up at boot time. */
 static const struct setup_cmd setup_cmds[] = {
 	SETUP_CMD_NOHANDLE("ATE0"),
-	SETUP_CMD_NOHANDLE("ATH"),
 	SETUP_CMD_NOHANDLE("AT+CMEE=1"),
 
 	/* Commands to read info from the modem (things like IMEI, Model etc). */
@@ -1226,14 +1225,14 @@ static int modem_init(const struct device *dev)
 	mctx.data_rssi = &mdata.mdm_rssi;
 
 	/* pin setup */
-	ret = gpio_pin_configure_dt(&power_gpio, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&power_gpio, GPIO_OUTPUT_HIGH);
 	if (ret < 0) {
 		LOG_ERR("Failed to configure %s pin", "power");
 		goto error;
 	}
 
 #if DT_INST_NODE_HAS_PROP(0, mdm_reset_gpios)
-	ret = gpio_pin_configure_dt(&reset_gpio, GPIO_OUTPUT_LOW);
+	ret = gpio_pin_configure_dt(&reset_gpio, GPIO_OUTPUT_HIGH);
 	if (ret < 0) {
 		LOG_ERR("Failed to configure %s pin", "reset");
 		goto error;

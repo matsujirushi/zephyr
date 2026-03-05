@@ -435,10 +435,23 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info, s
 
 NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
 
+#include <zephyr/drivers/gpio.h>
+#define SLEEP_TIME_MS   1000
+#define LED0_NODE DT_ALIAS(led0)
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+
 int main(void)
 {
 	uint16_t *port;
 	int ret;
+
+	gpio_is_ready_dt(&led);
+	gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	while (1) {
+		gpio_pin_toggle_dt(&led);
+		// printf("Hello\n");
+		k_msleep(SLEEP_TIME_MS);
+	}
 
 #ifdef CONFIG_SAMPLE_CELLULAR_MODEM_AUTO_APN
 	/* subscribe before powering the modem so we catch the IMSI event */
