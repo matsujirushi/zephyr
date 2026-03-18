@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) Seeed K.K.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include <nordic/nrf52840_partition_uf2_sdv7.dtsi>
+#include "wio_bg770a-pinctrl.dtsi"
+
+/ {
+	model = "Wio BG770A";
+	compatible = "seeed,wio-bg770a";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,bt-mon-uart = &uart0;
+		zephyr,bt-c2h-uart = &uart0;
+	};
+
+	aliases {
+		led0 = &user_led;
+		sw0 = &user_button;
+
+		user-led = &user_led;
+		user-button = &user_button;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		user_led: led0 {
+			gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+		};
+		d30: d30 {
+			gpios = <&gpio0 30 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		user_button: key0 {
+			gpios = <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <115200>;
+	hw-flow-control;
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	modem: bg770a {
+		compatible = "quectel,bg96";
+		status = "okay";
+		mdm-power-gpios = <&gpio1 1 GPIO_OPEN_DRAIN>;
+		mdm-reset-gpios = <&gpio1 15 GPIO_OPEN_DRAIN>;
+	};
+};
+
+grove_uart: &uart0 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};

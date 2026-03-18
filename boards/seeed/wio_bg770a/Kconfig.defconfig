@@ -1,0 +1,8 @@
+# Wio BG770A board configuration
+
+# Copyright (c) Seeed K.K.
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_WIO_BG770A
+
+endif # BOARD_WIO_BG770A
