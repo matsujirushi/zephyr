@@ -73,8 +73,8 @@
 	modem: bg770a {
 		compatible = "quectel,bg96";
 		status = "okay";
-		mdm-power-gpios = <&gpio1 1 GPIO_OPEN_DRAIN>;
-		mdm-reset-gpios = <&gpio1 15 GPIO_OPEN_DRAIN>;
+		mdm-power-gpios = <&gpio1 1 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
+		mdm-reset-gpios = <&gpio1 15 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
 	};
 };
 

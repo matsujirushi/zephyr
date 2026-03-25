@@ -768,7 +768,7 @@ static int modem_cellular_on_idle_state_enter(struct modem_cellular_data *data)
 	}
 
 	if (modem_cellular_gpio_is_enabled(&config->reset_gpio)) {
-		gpio_pin_set_dt(&config->reset_gpio, 0);
+		gpio_pin_set_dt(&config->reset_gpio, 1);
 	}
 
 	modem_cellular_notify_user_pipes_disconnected(data);
@@ -827,7 +827,7 @@ static int modem_cellular_on_idle_state_leave(struct modem_cellular_data *data)
 	k_sem_take(&data->suspended_sem, K_NO_WAIT);
 
 	if (modem_cellular_gpio_is_enabled(&config->reset_gpio)) {
-		gpio_pin_set_dt(&config->reset_gpio, 1);
+		gpio_pin_set_dt(&config->reset_gpio, 0);
 	}
 
 	if (modem_cellular_gpio_is_enabled(&config->wake_gpio)) {
@@ -875,7 +875,7 @@ static int modem_cellular_on_reset_pulse_state_enter(struct modem_cellular_data 
 		modem_cellular_baudrate_update(data, data->original_baudrate);
 	}
 
-	gpio_pin_set_dt(&config->reset_gpio, 0);
+	gpio_pin_set_dt(&config->reset_gpio, 1);
 	modem_cellular_start_timer(data, K_MSEC(config->reset_pulse_duration_ms));
 	return 0;
 }
@@ -909,7 +909,7 @@ static int modem_cellular_on_reset_pulse_state_leave(struct modem_cellular_data 
 	const struct modem_cellular_config *config =
 		(const struct modem_cellular_config *)data->dev->config;
 
-	gpio_pin_set_dt(&config->reset_gpio, 1);
+	gpio_pin_set_dt(&config->reset_gpio, 0);
 
 	if (modem_cellular_gpio_is_enabled(&config->wake_gpio)) {
 		gpio_pin_set_dt(&config->wake_gpio, 1);
@@ -959,7 +959,7 @@ static int modem_cellular_on_power_on_pulse_state_enter(struct modem_cellular_da
 	const struct modem_cellular_config *config =
 		(const struct modem_cellular_config *)data->dev->config;
 
-	gpio_pin_set_dt(&config->power_gpio, 0);
+	gpio_pin_set_dt(&config->power_gpio, 1);
 	modem_cellular_start_timer(data, K_MSEC(config->power_pulse_duration_ms));
 	return 0;
 }
@@ -986,7 +986,7 @@ static int modem_cellular_on_power_on_pulse_state_leave(struct modem_cellular_da
 	const struct modem_cellular_config *config =
 		(const struct modem_cellular_config *)data->dev->config;
 
-	gpio_pin_set_dt(&config->power_gpio, 1);
+	gpio_pin_set_dt(&config->power_gpio, 0);
 	modem_cellular_stop_timer(data);
 	return 0;
 }
@@ -1545,7 +1545,7 @@ static int modem_cellular_on_power_off_pulse_state_enter(struct modem_cellular_d
 		(const struct modem_cellular_config *)data->dev->config;
 
 	data->cmd_pipe = NULL;
-	gpio_pin_set_dt(&config->power_gpio, 0);
+	gpio_pin_set_dt(&config->power_gpio, 1);
 	modem_cellular_start_timer(data, K_MSEC(config->power_pulse_duration_ms));
 	return 0;
 }
@@ -1568,7 +1568,7 @@ static int modem_cellular_on_power_off_pulse_state_leave(struct modem_cellular_d
 	const struct modem_cellular_config *config =
 		(const struct modem_cellular_config *)data->dev->config;
 
-	gpio_pin_set_dt(&config->power_gpio, 1);
+	gpio_pin_set_dt(&config->power_gpio, 0);
 	modem_cellular_stop_timer(data);
 	return 0;
 }
@@ -2212,11 +2212,11 @@ static int modem_cellular_init(const struct device *dev)
 	}
 
 	if (modem_cellular_gpio_is_enabled(&config->power_gpio)) {
-		gpio_pin_configure_dt(&config->power_gpio, GPIO_OUTPUT_ACTIVE);
+		gpio_pin_configure_dt(&config->power_gpio, GPIO_OUTPUT_INACTIVE);
 	}
 
 	if (modem_cellular_gpio_is_enabled(&config->reset_gpio)) {
-		gpio_pin_configure_dt(&config->reset_gpio, GPIO_OUTPUT_INACTIVE);
+		gpio_pin_configure_dt(&config->reset_gpio, GPIO_OUTPUT_ACTIVE);
 	}
 
 	{
