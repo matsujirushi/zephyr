@@ -12,14 +12,6 @@
 	model = "Wio BG770A";
 	compatible = "seeed,wio-bg770a";
 
-	chosen {
-		zephyr,console = &uart0;
-		zephyr,shell-uart = &uart0;
-		zephyr,uart-mcumgr = &uart0;
-		zephyr,bt-mon-uart = &uart0;
-		zephyr,bt-c2h-uart = &uart0;
-	};
-
 	aliases {
 		led0 = &user_led;
 		sw0 = &user_button;
@@ -88,3 +80,5 @@ zephyr_udc0: &usbd {
 	compatible = "nordic,nrf-usbd";
 	status = "okay";
 };
+
+#include <../boards/common/usb/cdc_acm_serial.dtsi>
