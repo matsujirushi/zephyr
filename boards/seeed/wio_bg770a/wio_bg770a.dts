@@ -28,13 +28,24 @@
 		};
 	};
 
-	keys {
+	buttons {
 		compatible = "gpio-keys";
 
-		user_button: key0 {
+		user_button: button0 {
 			gpios = <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 			zephyr,code = <INPUT_KEY_0>;
 		};
+	};
+};
+
+/ {
+	grove_header_0: grove_header_0 {
+		compatible = "grove-header";
+		#gpio-cells = <2>;
+		gpio-map-mask = <0xffffffff 0xffffff80>;
+		gpio-map-pass-thru = <0 0x7f>;
+		gpio-map = <0 0 &gpio0 30 0>,	/* D30 */
+			   <1 0 &gpio0 31 0>;	/* D31 */
 	};
 };
 
